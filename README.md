@@ -1,10 +1,11 @@
 # MolView
 
 A simple 3D molecule viewer, built on top of [JSMol](https://jmol.sourceforge.net/).
-Interfaces with the Protein Data Bank (PDB), Materials Project and PubChem.
-Also supports saving screenshots.
 
 ![Example MolView UI](ui.png)
+
+Allows querying molecules from the [RSCB Protein Data Bank (PDB)](https://www.rcsb.org/), [Materials Project](https://next-gen.materialsproject.org/) and [NIH PubChem](https://pubchem.ncbi.nlm.nih.gov/).
+Also supports saving screenshots.
 
 ## How to run locally?
 
