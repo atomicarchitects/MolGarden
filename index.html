@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>JSmol Demo</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://chemapps.stolaf.edu/jmol/jsmol/JSmol.min.js"></script>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+    
+    .container {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+    }
+    
+    #appdiv {
+        flex: 1;
+        background: #ffffff;
+        display: flex;
+        align-items: left;
+        justify-content: left;
+    }
+    
+    .controls {
+        width: 400px;
+        padding: 20px;
+        background: white;
+        border-left: 1px solid #ddd;
+        overflow-y: auto;
+    }
+    
+    .control-group {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 5px;
+    }
+    
+    .control-group h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    button, input[type="radio"] {
+        margin: 5px 0;
+        cursor: pointer;
+    }
+    
+    button, input[type="button"] {
+        padding: 8px 12px;
+        background: #e1e3e1;
+        color: rgb(11, 3, 3);
+        border: none;
+        border-radius: 4px;
+        font-size: 13px;
+        margin: 3px;
+    }
+    
+    button:hover, input[type="button"]:hover {
+        background: #589f5b;
+    }
+
+    label {
+        margin-left: 5px;
+        font-size: 13px;
+    }
+
+    input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+</style>
+</head>
+<body>
+    <script>
+        var defaultzoomLevel = 40;
+        var myJmol = 'myJmol';
+        var Info = {
+            width: $(window).width() * 0.85,
+            height: $(window).height() * 1.0 - 6,
+            use: "HTML5",
+            j2sPath: "https://chemapps.stolaf.edu/jmol/jsmol/j2s",
+            serverURL: "https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
+            script: `set antialiasDisplay;`,
+
+            readyFunction: function(applet) {
+                console.log("JSmol ready!");
+            }
+        };
+
+
+        $(document).ready(function() {
+            $("#appdiv").html(Jmol.getAppletHtml(myJmol, Info));
+            Jmol.script(myJmol, `load examples/6XR6.cif; zoom ${defaultzoomLevel}`);
+        });
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fileContent = e.target.result;
+                const fileName = file.name;
+                
+                // Load the file content into JSmol
+                Jmol.script(myJmol, `load DATA "${fileName}"\n${fileContent}\nEND "${fileName}"`);
+
+                console.log("Loaded file:", fileName);
+            };
+            reader.readAsText(file);
+        }
+
+    </script>
+
+    <div class="container">
+        <div id="appdiv">Loading...</div>
+        
+        <div class="controls">
+            <h2 style="margin-top: 0;">Controls</h2>
+            
+            
+            <div class="control-group">
+                <h3>Load Molecule</h3>
+                <input type="file" id="file-input" accept=".xyz,.pdb,.mol,.sdf,.cif" onchange="handleFileUpload(event)">
+            </div>
+
+            <div class="control-group">
+                <h3>Display Type</h3>
+                <script type="text/javascript">
+                Jmol.jmolButton(myJmol, "select *;cartoons off;spacefill only", "Spacefill");
+                Jmol.jmolButton(myJmol, "select *;cartoons off;wireframe -0.1", "Wire");
+                Jmol.jmolButton(myJmol, "select *;cartoons off;spacefill 23%;wireframe 0.15", "Ball & Stick");
+                </script>
+            </div>
+
+            <div class="control-group">
+                <h3>Isosurface?</h3>
+                <script type="text/javascript">
+                Jmol.jmolButton(myJmol, "select *; isosurface vdw", "Show");
+                Jmol.jmolButton(myJmol, "isosurface off", "Hide");
+                </script>
+            </div>
+    
+            <div class="control-group">
+                <h3>Color Scheme</h3>
+                <script type="text/javascript">
+                Jmol.jmolButton(myJmol, "color cpk", "CPK (Default)");
+                Jmol.jmolButton(myJmol, "color rasmol", "RasMol");
+                Jmol.jmolButton(myJmol, "color chain", "By Chain");
+                Jmol.jmolButton(myJmol, "color structure", "By Structure");
+                Jmol.jmolButton(myJmol, "color group", "By Group");
+                </script>
+            </div>
+
+            <div class="control-group">
+                <h3>Display Mode</h3>
+                <script type="text/javascript">   
+                Jmol.jmolButton(myJmol, "cartoon only", "Ribbon Only");
+                Jmol.jmolButton(myJmol, "cartoon off; wireframe 0.15; spacefill 23%", "Atoms Only");
+                Jmol.jmolButton(myJmol, "cartoon on; wireframe 0.15; spacefill 23%", "Both");
+                </script>
+            </div>
+
+            <div class="control-group">
+                <h3>Background Color
+                    <input type="color" id="bg-color-picker" value="#ffffff" onchange="var hex = this.value; var r = parseInt(hex.substr(1,2), 16); var g = parseInt(hex.substr(3,2), 16); var b = parseInt(hex.substr(5,2), 16); Jmol.script(myJmol, 'background [' + r + ',' + g + ',' + b + ']')">
+                </h3>
+            </div>
+
+            <div class="control-group">
+                <h3>Rendering Quality</h3>
+                <script type="text/javascript">
+                Jmol.jmolButton(myJmol, "set antialiasDisplay true", "High");
+                Jmol.jmolButton(myJmol, "set antialiasDisplay false", "Low");
+                </script>
+            </div>
+            
+            <div class="control-group">
+                <h3>View Controls</h3>
+                <script type="text/javascript">
+                Jmol.jmolButton(myJmol, `reset; zoom ${defaultzoomLevel}`, "Reset View");
+                </script>
+            </div>
+            
+            <div class="control-group">
+                <h3>Spin Controls</h3>
+                <script type="text/javascript">
+                Jmol.jmolButton(myJmol, "spin on", "Start Spinning");
+                Jmol.jmolButton(myJmol, "spin off", "Stop Spinning");
+                </script>
+            </div>
+
+            <div class="control-group">
+                <h3>Zoom Controls</h3>
+                <script type="text/javascript">
+                    Jmol.jmolButton(myJmol, "zoom *1.5", "Zoom In");
+                    Jmol.jmolButton(myJmol, "zoom /1.5", "Zoom Out");
+                    Jmol.jmolButton(myJmol, `zoom ${defaultzoomLevel}`, "Reset Zoom");
+                </script>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
