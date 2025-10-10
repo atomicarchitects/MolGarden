@@ -1,18 +1,20 @@
 # MolView
 
-A simple 3D molecule viewer, built on top of JSMol
+A simple 3D molecule viewer, built on top of JSMol.
 
 ![Example UI of MolView](ui.png)
 
-## Setup
+## How to run locally?
 
-### Frontend
 ```bash
+git clone https://github.com/atomicarchitects/MolView.git
+cd MolView
 python -m http.server 8000
 ```
+
 and then navigate to http://localhost:8000/.
 
-### Backend (For Materials Project Only)
+### For Materials Project
 
 To query the Materials Project, you need to start a proxy server that will query OPTIMADE (no API key required) for you.
 
