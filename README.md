@@ -1,3 +1,9 @@
+# MolView
+
+A simple 3D molecule viewer, built on top of JSMol
+
+![Example UI of MolView](ui.png)
+
 ## Setup
 
 ### Frontend
