@@ -27,7 +27,7 @@
     }
     
     .controls {
-        width: 400px;
+        width: 600px;
         padding: 20px;
         background: white;
         border-left: 1px solid #ddd;
@@ -88,7 +88,7 @@
         var defaultzoomLevel = 40;
         var myJmol = 'myJmol';
         var Info = {
-            width: $(window).width() * 0.85,
+            width: $(window).width() * 0.8,
             height: $(window).height() * 1.0 - 6,
             use: "HTML5",
             j2sPath: "https://chemapps.stolaf.edu/jmol/jsmol/j2s",
@@ -158,6 +158,34 @@
                 </script>
             </div>
 
+            <div class="control-group">
+                <h3>Load From Materials Project</h3>
+                <input type="text" id="mp-id" placeholder="Enter MP ID (e.g., mp-149)">
+                <script type="text/javascript">
+                    async function loadFromMP() {
+                        var mpId = document.getElementById('mp-id').value.trim();
+                        if (!mpId) return;
+                        
+                        try {
+                            const response = await fetch(`http://localhost:5001/mp/${mpId}`);
+                            const cifContent = await response.text();
+                            
+                            if (cifContent && !cifContent.includes('error')) {
+                                Jmol.script(myJmol, `load DATA "${mpId}.cif"\n${cifContent}\nEND "${mpId}.cif"`);
+                                Jmol.script(myJmol, `zoom ${defaultzoomLevel}`);
+                                console.log("Loaded from Materials Project:", mpId);
+                            } else {
+                                alert("Structure not found: " + mpId);
+                            }
+                        } catch (error) {
+                            console.error("Error:", error);
+                            alert("Error loading structure. Check console for details.");
+                        }
+                    }
+                    
+                    Jmol.jmolButton(myJmol, "javascript loadFromMP()", "Load");
+                </script>
+            </div>
             <div class="control-group">
                 <h3>Display Type</h3>
                 <script type="text/javascript">
