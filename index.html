@@ -54,6 +54,14 @@
         cursor: pointer;
     }
     
+    input[type="file"], input[type="text"] {
+        width: 70%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
     button, input[type="button"] {
         padding: 8px 12px;
         background: #e1e3e1;
@@ -71,15 +79,6 @@
     label {
         margin-left: 5px;
         font-size: 13px;
-    }
-
-    input[type="file"] {
-        width: 100%;
-        padding: 8px;
-        margin-top: 5px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 12px;
     }
 
 </style>
@@ -106,24 +105,6 @@
             $("#appdiv").html(Jmol.getAppletHtml(myJmol, Info));
             Jmol.script(myJmol, `load examples/6XR6.cif; zoom ${defaultzoomLevel}`);
         });
-
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const fileContent = e.target.result;
-                const fileName = file.name;
-                
-                // Load the file content into JSmol
-                Jmol.script(myJmol, `load DATA "${fileName}"\n${fileContent}\nEND "${fileName}"`);
-
-                console.log("Loaded file:", fileName);
-            };
-            reader.readAsText(file);
-        }
-
     </script>
 
     <div class="container">
@@ -131,11 +112,50 @@
         
         <div class="controls">
             <h2 style="margin-top: 0;">Controls</h2>
-            
-            
+    
             <div class="control-group">
-                <h3>Load Molecule</h3>
-                <input type="file" id="file-input" accept=".xyz,.pdb,.mol,.sdf,.cif" onchange="handleFileUpload(event)">
+                <h3>Load From File</h3>
+                <input type="file" id="file-input" accept=".xyz,.pdb,.mol,.sdf,.cif" style="display: none;" onchange="handleFileUpload(event)">
+                <input type="text" id="file-name-display" placeholder=".xyz,.pdb,.mol,.sdf,.cif" readonly style="width: 50%; margin-right: 5px;">
+                <script type="text/javascript">
+                    function handleFileUpload(event) {
+                        const file = event.target.files[0];
+                        if (!file) return;
+                        
+                        document.getElementById('file-name-display').value = file.name;
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const fileContent = e.target.result;
+                            const fileName = file.name;
+                            
+                            // Load the file content into JSmol
+                            Jmol.script(myJmol, `load DATA "${fileName}"\n${fileContent}\nEND "${fileName}"; zoom ${defaultzoomLevel}`);
+
+                            console.log("Loaded file:", fileName);
+                        };
+                        reader.readAsText(file);
+                    }
+                    
+                    function openFileDialog() {
+                        document.getElementById('file-input').click();
+                    }
+                    
+                    Jmol.jmolButton(myJmol, "javascript openFileDialog()", "Choose File");
+                </script>
+            </div>
+            <div class="control-group">
+                <h3>Load From PDB</h3>
+                <input type="text" id="pdb-code" placeholder="Enter PDB code (e.g., 1crn)">
+                <script type="text/javascript">
+                    function loadPDB() {
+                        var pdbCode = document.getElementById('pdb-code').value.trim();
+                        if (pdbCode) {
+                            Jmol.script(myJmol, `load =${pdbCode}; zoom ${defaultzoomLevel}`);
+                        }
+                    }
+                    Jmol.jmolButton(myJmol, "javascript loadPDB()", "Load");
+                </script>
             </div>
 
             <div class="control-group">
@@ -177,7 +197,7 @@
 
             <div class="control-group">
                 <h3>Background Color
-                    <input type="color" id="bg-color-picker" value="#ffffff" onchange="var hex = this.value; var r = parseInt(hex.substr(1,2), 16); var g = parseInt(hex.substr(3,2), 16); var b = parseInt(hex.substr(5,2), 16); Jmol.script(myJmol, 'background [' + r + ',' + g + ',' + b + ']')">
+                    <input type="color" id="bg-color-picker" style="margin-left: 10px;" value="#ffffff" onchange="var hex = this.value; var r = parseInt(hex.substr(1,2), 16); var g = parseInt(hex.substr(3,2), 16); var b = parseInt(hex.substr(5,2), 16); Jmol.script(myJmol, 'background [' + r + ',' + g + ',' + b + ']')">
                 </h3>
             </div>
 
