@@ -39,14 +39,27 @@
         padding: 15px;
         background: #f9f9f9;
         border-radius: 5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
     }
     
+    .load-group {
+        display: block;
+    }
+
+
     .control-group h3 {
-        margin-top: 0;
-        margin-bottom: 10px;
+        margin: 0;
         color: #333;
         font-size: 14px;
         font-weight: bold;
+        white-space: nowrap;
+    }
+
+    .load-group h3 {
+        margin-bottom: 5px;
     }
 
     button, input[type="radio"] {
@@ -59,7 +72,7 @@
         padding: 8px;
         border: 1px solid #ddd;
         border-radius: 4px;
-        font-size: 12px;
+        font-size: 14px;
     }
 
     button, input[type="button"] {
@@ -68,7 +81,7 @@
         color: rgb(11, 3, 3);
         border: none;
         border-radius: 4px;
-        font-size: 13px;
+        font-size: 15px;
         margin: 3px;
     }
     
@@ -85,6 +98,7 @@
 </head>
 <body>
     <script>
+        var MP_PROXY_SERVER = "http://localhost:5001";
         var defaultzoomLevel = 40;
         var myJmol = 'myJmol';
         var Info = {
@@ -113,8 +127,8 @@
         <div class="controls">
             <h2 style="margin-top: 0;">Controls</h2>
     
-            <div class="control-group">
-                <h3>Load From File</h3>
+            <div class="control-group load-group">
+                <h3>Upload File</h3>
                 <input type="file" id="file-input" accept=".xyz,.pdb,.mol,.sdf,.cif" style="display: none;" onchange="handleFileUpload(event)">
                 <input type="text" id="file-name-display" placeholder=".xyz,.pdb,.mol,.sdf,.cif" readonly style="width: 50%; margin-right: 5px;">
                 <script type="text/javascript">
@@ -144,7 +158,8 @@
                     Jmol.jmolButton(myJmol, "javascript openFileDialog()", "Choose File");
                 </script>
             </div>
-            <div class="control-group">
+
+            <div class="control-group load-group">
                 <h3>Load From PDB</h3>
                 <input type="text" id="pdb-code" placeholder="Enter PDB code (e.g., 1crn)">
                 <script type="text/javascript">
@@ -158,8 +173,8 @@
                 </script>
             </div>
 
-            <div class="control-group">
-                <h3>Load From Materials Project</h3>
+            <div class="control-group load-group">
+                <h3>Load From Materials Project (Start Proxy Server First!)</h3>
                 <input type="text" id="mp-id" placeholder="Enter MP ID (e.g., mp-149)">
                 <script type="text/javascript">
                     async function loadFromMP() {
@@ -167,7 +182,7 @@
                         if (!mpId) return;
                         
                         try {
-                            const response = await fetch(`http://localhost:5001/mp/${mpId}`);
+                            const response = await fetch(`${MP_PROXY_SERVER}/mp/${mpId}`);
                             const cifContent = await response.text();
                             
                             if (cifContent && !cifContent.includes('error')) {
@@ -186,6 +201,34 @@
                     Jmol.jmolButton(myJmol, "javascript loadFromMP()", "Load");
                 </script>
             </div>
+
+            <div class="control-group load-group">
+                <h3>Load From PubChem</h3>
+                <input type="text" id="pubchem-id" placeholder="Enter PubChem ID (e.g., aspirin)">
+                <script type="text/javascript">
+                    function loadPubChem() {
+                        var pubchemId = document.getElementById('pubchem-id').value.trim();
+                        if (pubchemId) {
+                            Jmol.script(myJmol, `load :${pubchemId}; zoom ${defaultzoomLevel}`);
+                        }
+                    }
+                    Jmol.jmolButton(myJmol, "javascript loadPubChem()", "Load");
+                </script>
+            </div>
+
+            <div class="control-group">
+                <h3>Save Image</h3>
+                <input type="text" id="image-filename" placeholder="filename" value="molecule" style="width: 150px;">
+                <script type="text/javascript">
+                    function saveImagePNG() {
+                        var filename = document.getElementById('image-filename').value.trim() || 'molecule';
+                        Jmol.script(myJmol, `write IMAGE PNG '${filename}.png'`);
+                    }
+                    Jmol.jmolButton(myJmol, "javascript saveImagePNG()", "Save as PNG");
+                </script>
+            </div>
+
+
             <div class="control-group">
                 <h3>Display Type</h3>
                 <script type="text/javascript">
@@ -224,9 +267,8 @@
             </div>
 
             <div class="control-group">
-                <h3>Background Color
-                    <input type="color" id="bg-color-picker" style="margin-left: 10px;" value="#ffffff" onchange="var hex = this.value; var r = parseInt(hex.substr(1,2), 16); var g = parseInt(hex.substr(3,2), 16); var b = parseInt(hex.substr(5,2), 16); Jmol.script(myJmol, 'background [' + r + ',' + g + ',' + b + ']')">
-                </h3>
+                <h3>Background Color</h3>
+                <input type="color" id="bg-color-picker" style="margin-left: 10px;" value="#ffffff" onchange="var hex = this.value; var r = parseInt(hex.substr(1,2), 16); var g = parseInt(hex.substr(3,2), 16); var b = parseInt(hex.substr(5,2), 16); Jmol.script(myJmol, 'background [' + r + ',' + g + ',' + b + ']')">
             </div>
 
             <div class="control-group">

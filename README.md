@@ -1,6 +1,8 @@
 # MolView
 
-A simple 3D molecule viewer, built on top of JSMol.
+A simple 3D molecule viewer, built on top of [JSMol](https://jmol.sourceforge.net/).
+Interfaces with the Protein Data Bank (PDB), Materials Project and PubChem.
+Also supports saving screenshots.
 
 ![Example UI of MolView](ui.png)
 
