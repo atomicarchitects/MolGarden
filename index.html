@@ -117,7 +117,7 @@
 
         $(document).ready(function() {
             $("#appdiv").html(Jmol.getAppletHtml(myJmol, Info));
-            Jmol.script(myJmol, `load examples/6XR6.cif; zoom ${defaultzoomLevel}`);
+            Jmol.script(myJmol, `load examples/6XR6.cif; zoom ${defaultzoomLevel}; cartoon only; color structure; set antialiasDisplay true;`);  // Load a default structure
         });
     </script>
 
