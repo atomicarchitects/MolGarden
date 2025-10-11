@@ -186,8 +186,7 @@
                             const cifContent = await response.text();
                             
                             if (cifContent && !cifContent.includes('error')) {
-                                Jmol.script(myJmol, `load DATA "${mpId}.cif"\n${cifContent}\nEND "${mpId}.cif"`);
-                                Jmol.script(myJmol, `zoom ${defaultzoomLevel}`);
+                                Jmol.script(myJmol, `load DATA "${mpId}.cif"\n${cifContent}\nEND "${mpId}.cif"; zoom ${defaultzoomLevel}`);
                                 console.log("Loaded from Materials Project:", mpId);
                             } else {
                                 alert("Structure not found: " + mpId);
