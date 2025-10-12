@@ -459,20 +459,19 @@
                 </script>
             </div>
 
-
             <div class="control-group">
                 <h3>Display Type</h3>
                 <script type="text/javascript">
-                Jmol.jmolButton(myJmol, "select *;cartoons off;spacefill only", "Spacefill");
-                Jmol.jmolButton(myJmol, "select *;cartoons off;wireframe -0.1", "Wire");
-                Jmol.jmolButton(myJmol, "select *;cartoons off;spacefill 23%;wireframe 0.15", "Ball & Stick");
+                    Jmol.jmolButton(myJmol, "var temp = {selected}; select *; spacefill 23%; wireframe 0.15; select @temp", "Ball & Stick");
+                    Jmol.jmolButton(myJmol, "var temp = {selected}; select *; wireframe -0.1; select @temp", "Wire");
+                    Jmol.jmolButton(myJmol, "var temp = {selected}; select *; spacefill only; select @temp", "Spacefill");
                 </script>
             </div>
 
             <div class="control-group">
                 <h3>Isosurface</h3>
                 <script type="text/javascript">
-                Jmol.jmolButton(myJmol, "select *; isosurface vdw", "Show");
+                Jmol.jmolButton(myJmol, "var temp = {selected}; select *; isosurface vdw; select @temp", "Show");
                 Jmol.jmolButton(myJmol, "isosurface off", "Hide");
                 </script>
             </div>
