@@ -172,7 +172,7 @@
 
         $(document).ready(function() {
             $("#appdiv").html(Jmol.getAppletHtml(myJmol, Info));
-            Jmol.script(myJmol, `load examples/6XR6.cif; ${default_render()}; spin on;`);  // Load a default structure
+            Jmol.script(myJmol, `load examples/theobromine.sdf; ${default_render()}; set picking ATOM; select none; set display selected; set selecthalo true;`);  // Load a default structure
         });
     </script>
 
@@ -425,13 +425,37 @@
                 Jmol.jmolButton(myJmol, "animation fps 20", "Fast (20 fps)");
                 </script>
             </div>
-        </div>
+            </div>
 
 
             <div class="control-group">
-                <h3>Save Image</h3>
+                <h3>Atom Selection & Deletion</h3>
                 <script type="text/javascript">
-                    Jmol.jmolButton(myJmol, "write image PNG 'molecule.png'", "Save PNG");
+                    Jmol.jmolButton(myJmol, "select none", "Clear Selection");
+                    Jmol.jmolButton(myJmol, "select within(2.0, selected)", "Expand Selection (2Å)");
+                    Jmol.jmolButton(myJmol, "save state _beforeDelete; delete selected", "Delete Selected");
+                    Jmol.jmolButton(myJmol, "restore state _beforeDelete; set picking ATOM;", "Undo Deletion");
+                </script>
+            </div>
+
+            <div class="control-group">
+                <h3>Atom Labels</h3>
+                <script type="text/javascript">
+                    Jmol.jmolButton(myJmol, "var temp = {selected}; select *; label %a; select @temp", "Show");
+                    Jmol.jmolButton(myJmol, "var temp = {selected}; select *; label off; select @temp", "Hide");
+                </script>
+            </div>
+
+
+            <div class="control-group">
+                <h3>Save Image & Structure</h3>
+                <script type="text/javascript">
+                    Jmol.jmolButton(myJmol, "write image PNG 'molecule.png'", ".png");
+                    Jmol.jmolButton(myJmol, "var temp = {selected}; select *; write xyz 'molecule.xyz'; select @temp", ".xyz");
+                    Jmol.jmolButton(myJmol, "var temp = {selected}; select *; write pdb 'molecule.pdb'; select @temp", ".pdb");
+                    Jmol.jmolButton(myJmol, "var temp = {selected}; select *; write mol 'molecule.mol'; select @temp", ".mol");
+                    Jmol.jmolButton(myJmol, "var temp = {selected}; select *; write sdf 'molecule.sdf'; select @temp", ".sdf");
+                    Jmol.jmolButton(myJmol, "var temp = {selected}; select *; write cif 'molecule.cif'; select @temp", ".cif");
                 </script>
             </div>
 
