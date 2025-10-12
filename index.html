@@ -271,9 +271,9 @@
             <div class="load-group control-group">
                 <h3>Load Trajectory</h3>
                 <div style="margin-bottom: 10px;">
-                    <label style="display: block; margin-bottom: 5px;">Topology (.pdb, .cif):</label>
-                    <input type="file" id="topology-input" accept=".pdb,.cif" style="display: none;">
-                    <input type="text" id="topology-name-display" placeholder=".pdb, .cif" readonly style="width: 50%; margin-right: 5px;">
+                    <label style="display: block; margin-bottom: 5px;">Topology (.xyz,.pdb,.mol,.sdf,.cif):</label>
+                    <input type="file" id="topology-input" accept=".xyz,.pdb,.mol,.sdf,.cif" style="display: none;">
+                    <input type="text" id="topology-name-display" placeholder=".xyz, .pdb, .mol, .sdf, .cif" readonly style="width: 50%; margin-right: 5px;">
                     <script type="text/javascript">
                         function openTopologyDialog() {
                             document.getElementById('topology-input').click();
@@ -319,7 +319,7 @@
                             alert("Please load topology file first!");
                             return;
                         }
-                        
+
                         document.getElementById('trajectory-name-display').value = file.name;
 
                         const reader = new FileReader();
@@ -327,14 +327,22 @@
                             const trajectoryData = event.target.result;
                             const trajectoryFileName = file.name;
 
-                            // // Load topology first
-                            // Jmol.script(myJmol, `load DATA "${topologyFileName}"\n${topologyData}\nEND "${topologyFileName}"`);
-
                             // Then load trajectory coordinates
                             Jmol.script(myJmol, `load trajectory DATA "${trajectoryFileName}"\n${trajectoryData}\nEND "${trajectoryFileName}" coord "${topologyFileName}"; ${default_render()}`);
 
-                            const frameCount = Jmol.evaluateVar(myJmol, 'modelCount');
+                            // Alternative way to get frame count
+                            const frameCount = Jmol.evaluate(myJmol, '{*}.length');
                             console.log(`Loaded trajectory with ${frameCount} frames`);
+
+                            // Show trajectory controls
+                            document.getElementById('trajectory-controls').style.display = 'block';
+
+                            // Update slider
+                            const slider = document.getElementById('frame-slider');
+                            slider.max = frameCount;
+                            slider.value = 1;
+                            document.getElementById('frame-display').textContent = `Frame: 1 / ${frameCount}`;
+
                         };
 
                         // Read as binary for .dcd, .xtc, .trr
@@ -347,28 +355,77 @@
                 </script>
             </div>
 
+            <div id="trajectory-controls" style="display: none;">
             <div class="control-group">
-                <h3>Trajectory Controls</h3>
+                <h3>Frame Navigation</h3>
+                <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+                    <input type="range" id="frame-slider" min="1" max="100" value="1" 
+                        style="flex: 1;" oninput="updateFrame(this.value)">
+                    <span id="frame-display" style="min-width: 100px; font-size: 12px;">Frame: 1 / 100</span>
+                </div>
                 <script type="text/javascript">
-                    Jmol.jmolButton(myJmol, "animation on", "Play");
-                    Jmol.jmolButton(myJmol, "animation off", "Pause");
-                    Jmol.jmolButton(myJmol, "animation mode loop", "Loop");
-                    Jmol.jmolButton(myJmol, "animation mode palindrome", "Palindrome");
-                    Jmol.jmolButton(myJmol, "frame 1", "First Frame");
-                    Jmol.jmolButton(myJmol, "frame last", "Last Frame");
-                    Jmol.jmolButton(myJmol, "frame next", "Next");
-                    Jmol.jmolButton(myJmol, "frame previous", "Previous");
+                function updateFrame(frameNum) {
+                    Jmol.script(myJmol, `frame ${frameNum}`);
+                    const maxFrames = document.getElementById('frame-slider').max;
+                    document.getElementById('frame-display').textContent = `Frame: ${frameNum} / ${maxFrames}`;
+                }
+                
+                Jmol.jmolButton(myJmol, "javascript updateSliderToFirst()", "First");
+                Jmol.jmolButton(myJmol, "javascript decrementFrame()", "◀");
+                Jmol.jmolButton(myJmol, "javascript incrementFrame()", "▶");
+                Jmol.jmolButton(myJmol, "javascript updateSliderToLast()", "Last");
+
+                function updateSliderToFirst() {
+                    document.getElementById('frame-slider').value = 1;
+                    updateFrame(1);
+                }
+
+                function incrementFrame() {
+                    let currentFrame = parseInt(document.getElementById('frame-slider').value);
+                    const maxFrames = document.getElementById('frame-slider').max;
+                    if (currentFrame < maxFrames) {
+                        currentFrame += 1;
+                        document.getElementById('frame-slider').value = currentFrame;
+                        updateFrame(currentFrame);
+                    }
+                }
+
+                function decrementFrame() {
+                    let currentFrame = parseInt(document.getElementById('frame-slider').value);
+                    if (currentFrame > 1) {
+                        currentFrame -= 1;
+                        document.getElementById('frame-slider').value = currentFrame;
+                        updateFrame(currentFrame);
+                    }
+                }
+                
+                function updateSliderToLast() {
+                    const maxFrames = document.getElementById('frame-slider').max;
+                    document.getElementById('frame-slider').value = maxFrames;
+                    updateFrame(maxFrames);
+                }
+                </script>
+            </div>
+
+            <div class="control-group">
+                <h3>Animation</h3>
+                <script type="text/javascript">
+                Jmol.jmolButton(myJmol, "animation on", "Play");
+                Jmol.jmolButton(myJmol, "animation off", "Pause");
+                Jmol.jmolButton(myJmol, "animation mode loop", "Loop");
+                Jmol.jmolButton(myJmol, "animation mode palindrome", "Palindrome");
                 </script>
             </div>
 
             <div class="control-group">
                 <h3>Animation Speed</h3>
                 <script type="text/javascript">
-                    Jmol.jmolButton(myJmol, "animation fps 5", "Slow");
-                    Jmol.jmolButton(myJmol, "animation fps 10", "Medium");
-                    Jmol.jmolButton(myJmol, "animation fps 20", "Fast");
+                Jmol.jmolButton(myJmol, "animation fps 5", "Slow (5 fps)");
+                Jmol.jmolButton(myJmol, "animation fps 10", "Medium (10 fps)");
+                Jmol.jmolButton(myJmol, "animation fps 20", "Fast (20 fps)");
                 </script>
             </div>
+        </div>
 
 
             <div class="control-group">
