@@ -268,6 +268,109 @@
                 </script>
             </div>
 
+            <div class="load-group control-group">
+                <h3>Load Trajectory</h3>
+                <div style="margin-bottom: 10px;">
+                    <label style="display: block; margin-bottom: 5px;">Topology (.pdb, .cif):</label>
+                    <input type="file" id="topology-input" accept=".pdb,.cif" style="display: none;">
+                    <input type="text" id="topology-name-display" placeholder=".pdb, .cif" readonly style="width: 50%; margin-right: 5px;">
+                    <script type="text/javascript">
+                        function openTopologyDialog() {
+                            document.getElementById('topology-input').click();
+                        }
+                        Jmol.jmolButton(myJmol, "javascript openTopologyDialog()", "Choose File");
+                    </script>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label style="display: block; margin-bottom: 5px;">Trajectory (.dcd, .xtc, .trr):</label>
+                    <input type="file" id="trajectory-input" accept=".dcd,.xtc,.trr,.xyz" style="display: none;">
+                    <input type="text" id="trajectory-name-display" placeholder=".dcd, .xtc, .trr, .xyz" readonly style="width: 50%; margin-right: 5px;">
+                    <script type="text/javascript">
+                        function openTrajectoryDialog() {
+                            document.getElementById('trajectory-input').click();
+                        }
+                        Jmol.jmolButton(myJmol, "javascript openTrajectoryDialog()", "Choose File");
+                    </script>
+                </div>
+                <script type="text/javascript">
+                    let topologyData = null;
+                    let topologyFileName = null;
+
+                    document.getElementById('topology-input').addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        document.getElementById('topology-name-display').value = file.name;
+
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            topologyData = event.target.result;
+                            topologyFileName = file.name;
+                            console.log("Topology loaded:", topologyFileName);
+                        };
+                        reader.readAsText(file);
+                    });
+
+                    document.getElementById('trajectory-input').addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        if (!topologyData) {
+                            alert("Please load topology file first!");
+                            return;
+                        }
+                        
+                        document.getElementById('trajectory-name-display').value = file.name;
+
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const trajectoryData = event.target.result;
+                            const trajectoryFileName = file.name;
+
+                            // // Load topology first
+                            // Jmol.script(myJmol, `load DATA "${topologyFileName}"\n${topologyData}\nEND "${topologyFileName}"`);
+
+                            // Then load trajectory coordinates
+                            Jmol.script(myJmol, `load trajectory DATA "${trajectoryFileName}"\n${trajectoryData}\nEND "${trajectoryFileName}" coord "${topologyFileName}"; ${default_render()}`);
+
+                            const frameCount = Jmol.evaluateVar(myJmol, 'modelCount');
+                            console.log(`Loaded trajectory with ${frameCount} frames`);
+                        };
+
+                        // Read as binary for .dcd, .xtc, .trr
+                        if (file.name.endsWith('.dcd') || file.name.endsWith('.xtc') || file.name.endsWith('.trr')) {
+                            reader.readAsArrayBuffer(file);
+                        } else {
+                            reader.readAsText(file);
+                        }
+                    });
+                </script>
+            </div>
+
+            <div class="control-group">
+                <h3>Trajectory Controls</h3>
+                <script type="text/javascript">
+                    Jmol.jmolButton(myJmol, "animation on", "Play");
+                    Jmol.jmolButton(myJmol, "animation off", "Pause");
+                    Jmol.jmolButton(myJmol, "animation mode loop", "Loop");
+                    Jmol.jmolButton(myJmol, "animation mode palindrome", "Palindrome");
+                    Jmol.jmolButton(myJmol, "frame 1", "First Frame");
+                    Jmol.jmolButton(myJmol, "frame last", "Last Frame");
+                    Jmol.jmolButton(myJmol, "frame next", "Next");
+                    Jmol.jmolButton(myJmol, "frame previous", "Previous");
+                </script>
+            </div>
+
+            <div class="control-group">
+                <h3>Animation Speed</h3>
+                <script type="text/javascript">
+                    Jmol.jmolButton(myJmol, "animation fps 5", "Slow");
+                    Jmol.jmolButton(myJmol, "animation fps 10", "Medium");
+                    Jmol.jmolButton(myJmol, "animation fps 20", "Fast");
+                </script>
+            </div>
+
+
             <div class="control-group">
                 <h3>Save Image</h3>
                 <script type="text/javascript">
