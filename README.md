@@ -1,6 +1,6 @@
 # MolView
 
-A simple 3D molecule viewer, built on top of [JSMol](https://jmol.sourceforge.net/). Accessible at https://atomicarchitects.com/MolView/.
+A simple 3D viewer for all kinds of molecules, built on top of [JSMol](https://jmol.sourceforge.net/). Accessible at https://atomicarchitects.com/MolView/.
 
 ![Example MolView UI](ui.png)
 
