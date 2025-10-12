@@ -4,8 +4,10 @@ A simple 3D molecule viewer, built on top of [JSMol](https://jmol.sourceforge.ne
 
 ![Example MolView UI](ui.png)
 
-Allows querying molecules from the [RSCB Protein Data Bank (PDB)](https://www.rcsb.org/), [Materials Project](https://next-gen.materialsproject.org/) and [NIH PubChem](https://pubchem.ncbi.nlm.nih.gov/).
-Also supports saving screenshots.
+Some supported features:
+- Load molecules from the [RSCB Protein Data Bank (PDB)](https://www.rcsb.org/), [Materials Project](https://next-gen.materialsproject.org/) and [NIH PubChem](https://pubchem.ncbi.nlm.nih.gov/), with no API keys needed.
+- Manipulate atomic geometries (highlight/delete/color atoms).
+- Save screenshots (as .png) and structures (as .xyz, .pdb, .mol, .sdf, .cif).
 
 ## How to run locally?
 
