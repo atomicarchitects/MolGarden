@@ -427,6 +427,79 @@
             </div>
             </div>
 
+        <div class="control-group load-group">
+            <h3>Generation</h3>
+            <script type="text/javascript">
+                async function generateFromModel() {
+                    const apiUrl = document.getElementById('local-api-url').value.trim();
+                    const useConditioning = document.getElementById('use-conditioning').checked;
+                    const prompt = useConditioning ? document.getElementById('model-prompt').value.trim() : '';
+                    
+                    if (!apiUrl) {
+                        alert('Please enter your local API URL');
+                        return;
+                    }
+                    
+                    // Get current geometry from JSmol
+                    Jmol.script(myJmol, 'var temp = {selected}; select *; var currentXYZ = write("xyz"); select @temp;');  // Ensure all atoms are selected for extraction
+                    const currentXYZ = Jmol.evaluate(myJmol, 'currentXYZ');
+                    console.log('Current geometry:', currentXYZ);
+
+                    try {
+                        // Prepare request body
+                        const requestBody = {};
+                        
+                        if (useConditioning && prompt) {
+                            requestBody.prompt = prompt;
+                        }
+                        
+                        if (currentXYZ) {
+                            requestBody.geometry = currentXYZ;
+                        }
+                        
+                        // Call your local model
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(requestBody)
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        console.log('Received from model:', data);
+                        
+                        // Load the generated molecule
+                        const xyzData = data.xyz || data.coordinates || data.atoms || data.result;
+                        
+                        if (xyzData) {
+                            Jmol.script(myJmol, `load DATA "generated.xyz"\n${xyzData}\nEND "generated.xyz"; ${default_render()}`);
+                            console.log('Molecule loaded successfully!');
+                        } else {
+                            throw new Error('No XYZ data in response');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Error calling model:', error);
+                        alert(`Error: ${error.message}`);
+                    }
+                }
+            </script>
+            <input type="text" id="local-api-url" placeholder="http://localhost:5000/generate" value="http://localhost:5000/generate">
+            <label><input type="checkbox" id="use-conditioning"> Use prompt</label>
+            <input type="text" id="model-prompt" placeholder="Optional conditioning text" style="display: none;"></input>
+            <button onclick="generateFromModel()">Generate from Model</button>
+        </div>
+
+        <script>
+        document.getElementById('use-conditioning').addEventListener('change', function() {
+            document.getElementById('model-prompt').style.display = this.checked ? 'block' : 'none';
+        });
+        </script>
 
             <div class="control-group">
                 <h3>Atom Selection & Deletion</h3>
