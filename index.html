@@ -431,7 +431,7 @@
             <h3>Generation</h3>
             <script type="text/javascript">
                 async function generateFromModel() {
-                    const apiUrl = document.getElementById('local-api-url').value.trim();
+                    const apiUrl = document.getElementById('model-api-url').value.trim();
                     const useConditioning = document.getElementById('use-conditioning').checked;
                     const prompt = useConditioning ? document.getElementById('model-prompt').value.trim() : '';
                     
@@ -489,9 +489,13 @@
                     }
                 }
             </script>
-            <input type="text" id="local-api-url" placeholder="http://localhost:5000/generate" value="http://localhost:5000/generate">
-            <label><input type="checkbox" id="use-conditioning"> Use prompt</label>
-            <input type="text" id="model-prompt" placeholder="Optional conditioning text" style="display: none;"></input>
+            <label for="model-api-url" style="display: block; margin-bottom: 5px;">Model API URL:</label>
+            <input type="text" id="model-api-url" placeholder="http://localhost:5000/generate" value="http://localhost:5000/generate">
+            <label style="display: flex; align-items: center; gap: 5px; margin-top: 10px; margin-bottom: 10px;">
+                <input type="checkbox" id="use-conditioning" style="width: auto;">
+                <span>Add prompt?</span>
+            </label>
+            <input type="text" id="model-prompt" placeholder="Optional conditioning text" style="display: none; margin-bottom: 10px; width: 100%;">
             <button onclick="generateFromModel()">Generate from Model</button>
         </div>
 
