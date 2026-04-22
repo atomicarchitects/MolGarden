@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>MolView</title>
+<title>MolGarden</title>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://chemapps.stolaf.edu/jmol/jsmol/JSmol.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -402,7 +402,8 @@ H       -0.52025        3.30866        0.00000
     <div class="container">
         <div id="appdiv">
             <div class="brand-overlay">
-                <h1>MolView</h1>
+                <h1>Mol<span>Garden</span></h1>
+                <p>Interactive 3D molecular generation</p>
             </div>
             Loading...
         </div>
@@ -415,7 +416,7 @@ H       -0.52025        3.30866        0.00000
 
                 <!-- ═══════════════ GENERATION ═══════════════ -->
                 <div class="control-group generation-group">
-                    <h3><span class="dot"></span> Symphony Generation</h3>
+                    <h3><span class="dot"></span> Generation</h3>
 
                     <label for="model-api-url" style="font-size: 11px; color: var(--text-dim); margin-bottom: 4px; display: block;">Model API Endpoint</label>
                     <input type="text" id="model-api-url" placeholder="http://127.0.0.1:5000/generate" value="http://127.0.0.1:5000/generate">
@@ -679,7 +680,7 @@ H       -0.52025        3.30866        0.00000
                     <div class="btn-row">
                         <script type="text/javascript">
                             Jmol.jmolButton(myJmol, "select none", "Clear");
-                            Jmol.jmolButton(myJmol, "select within(2.0, selected)", "Select within 2Å");
+                            Jmol.jmolButton(myJmol, "select within(2.0, selected)", "Expand 2Å");
                             Jmol.jmolButton(myJmol, "save state _beforeDelete; delete selected", "Delete");
                             Jmol.jmolButton(myJmol, "restore state _beforeDelete; set picking ATOM;", "Undo");
                         </script>
