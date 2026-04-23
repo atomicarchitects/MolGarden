@@ -1,10 +1,8 @@
 # MolGarden
 
-An interactive 3D molecule viewer and builder, with autoregressive generation powered by [Symphony](https://github.com/atomicarchitects/symphony).
+An interactive 3D molecule viewer and builder, with support for querying any 3D molecular generative model. Below is a demo with [Symphony](https://github.com/atomicarchitects/symphony):
 
-
-https://github.com/user-attachments/assets/177b2817-96f6-4dd0-825b-6c2ebbaebf80
-
+<video src="https://github.com/user-attachments/assets/177b2817-96f6-4dd0-825b-6c2ebbaebf80.mp4" width="100%" autoplay loop muted></video>
 
 Built on top of [JSmol](https://jmol.sourceforge.net/) for 3D visualization.
 
@@ -15,8 +13,6 @@ Built on top of [JSmol](https://jmol.sourceforge.net/) for 3D visualization.
 The backend corresponds to the model server, which will be queried for generation.
 
 ```bash
-cd backend
-
 # Install dependencies (in your symphony environment)
 pip install flask flask-cors
 
