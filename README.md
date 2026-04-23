@@ -2,7 +2,7 @@
 
 An interactive 3D molecule viewer and builder, with support for querying any 3D molecular generative model. Below is a demo with [Symphony](https://github.com/atomicarchitects/symphony):
 
-<video src="https://github.com/user-attachments/assets/177b2817-96f6-4dd0-825b-6c2ebbaebf80.mp4" width="100%" autoplay loop muted></video>
+<img width="1280" height="709" alt="symphony-demo-benzene-compressed" src="https://github.com/user-attachments/assets/4bf7aa28-722e-4ed3-b2e4-f7aba0bda094" />
 
 Built on top of [JSmol](https://jmol.sourceforge.net/) for 3D visualization.
 
