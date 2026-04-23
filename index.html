@@ -39,13 +39,15 @@
     }
 
     #appdiv {
-        flex: 1;
+        width: 100%;
+        height: 100%;
         background: #000;
         display: flex;
         align-items: center;
         justify-content: center;
-        min-width: 0;
-        position: relative;
+    }
+    #appdiv *:focus, #appdiv canvas, #appdiv div {
+        outline: none;
     }
 
     /* Branding overlay */
@@ -53,7 +55,7 @@
         position: absolute;
         top: 20px;
         left: 24px;
-        z-index: 10;
+        z-index: 10000;
         pointer-events: none;
     }
     .brand-overlay h1 {
@@ -340,8 +342,8 @@
         var defaultZoomLevel = 70;
         var myJmol = 'myJmol';
         var Info = {
-            width: $(window).width() * 0.7,
-            height: $(window).height() * 1.0 - 6,
+            width: $(window).width() - 360,
+            height: $(window).height(),
             use: "HTML5",
             j2sPath: "https://chemapps.stolaf.edu/jmol/jsmol/j2s",
             serverURL: "https://chemapps.stolaf.edu/jmol/jsmol/php/jsmol.php",
@@ -356,6 +358,7 @@
             reset;
             zoom ${defaultZoomLevel};
             set antialiasDisplay true;
+            set multipleBondSpacing 0;
             spacefill off;
             wireframe off;
             cartoons off;
@@ -400,12 +403,14 @@ H       -0.52025        3.30866        0.00000
     </script>
 
     <div class="container">
-        <div id="appdiv">
+        <div style="position: relative; flex: 1; min-width: 0;">
             <div class="brand-overlay">
                 <h1>Mol<span>Garden</span></h1>
-                <p>Interactive 3D molecular generation</p>
+                <p>an interactive 3D molecule builder</p>
             </div>
-            Loading...
+            <div id="appdiv">
+                Loading...
+            </div>
         </div>
 
         <div class="controls">
@@ -551,6 +556,7 @@ H       -0.52025        3.30866        0.00000
                                         if (data.stopped) {
                                             logGen(`Step ${genStep}: model returned STOP signal`);
                                             setStatus('idle', `Done — ${genStep} steps`);
+                                            Jmol.script(myJmol, 'spin on');
                                             isGenerating = false;
                                             document.getElementById('gen-btn').textContent = '▶ Generate Step';
                                             return false;
@@ -561,11 +567,12 @@ H       -0.52025        3.30866        0.00000
 
                                         // Capture current orientation before load.
                                         let orient = Jmol.evaluate(myJmol, 'script("show orientation")');
-                                        Jmol.script(myJmol, `load DATA "generated.xyz"\n${xyzData}\nEND "generated.xyz"; spacefill 23%; wireframe 0.15; color cpk; set picking ATOM; select none; set display selected; set selecthalo true; background black;`);
-                                        // Restore orientation instantly (replace moveto time 1.0 with 0).
+                                        Jmol.script(myJmol, `load DATA "generated.xyz"\n${xyzData}\nEND "generated.xyz"; spacefill 23%; wireframe 0.15; color cpk; set multipleBondSpacing 0; set picking ATOM; select none; set display selected; set selecthalo true; background black;`);
+                                        // Restore orientation instantly.
                                         if (orient) {
-                                            orient = orient.replace('moveto /* time, axisAngle */ 1.0', 'moveto /* time, axisAngle */ 0');
-                                            Jmol.script(myJmol, orient);
+                                            // Extract just the moveto line, set time to 0.
+                                            const moveto = orient.split('\n')[0];
+                                            Jmol.script(myJmol, moveto.replace('moveto /* time, axisAngle */ 1.0', 'moveto /* time, axisAngle */ 0'));
                                         }
                                         logGen(`Step ${genStep}: loaded ${numAtoms} atoms`);
                                         setStatus('', `Step ${genStep} — ${numAtoms} atoms`);
@@ -590,6 +597,7 @@ H       -0.52025        3.30866        0.00000
                                         await new Promise(r => setTimeout(r, 300)); // small delay
                                     }
                                 }
+                                Jmol.script(myJmol, 'spin on');
                             } else {
                                 await doStep();
                             }
@@ -680,7 +688,7 @@ H       -0.52025        3.30866        0.00000
                     <div class="btn-row">
                         <script type="text/javascript">
                             Jmol.jmolButton(myJmol, "select none", "Clear");
-                            Jmol.jmolButton(myJmol, "select within(2.0, selected)", "Expand 2Å");
+                            Jmol.jmolButton(myJmol, "select within(2.0, selected)", "Select within 2Å");
                             Jmol.jmolButton(myJmol, "save state _beforeDelete; delete selected", "Delete");
                             Jmol.jmolButton(myJmol, "restore state _beforeDelete; set picking ATOM;", "Undo");
                         </script>
