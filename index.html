@@ -556,7 +556,7 @@ H       -0.52025        3.30866        0.00000
                                         if (data.stopped) {
                                             logGen(`Step ${genStep}: model returned STOP signal`);
                                             setStatus('idle', `Done — ${genStep} steps`);
-                                            Jmol.script(myJmol, 'spin on');
+                                            // Jmol.script(myJmol, 'spin on');
                                             isGenerating = false;
                                             document.getElementById('gen-btn').textContent = '▶ Generate Step';
                                             return false;
@@ -597,7 +597,7 @@ H       -0.52025        3.30866        0.00000
                                         await new Promise(r => setTimeout(r, 300)); // small delay
                                     }
                                 }
-                                Jmol.script(myJmol, 'spin on');
+                                // Jmol.script(myJmol, 'spin on');
                             } else {
                                 await doStep();
                             }
