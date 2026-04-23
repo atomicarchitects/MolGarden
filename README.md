@@ -2,11 +2,17 @@
 
 An interactive 3D molecule viewer and builder, with autoregressive generation powered by [Symphony](https://github.com/atomicarchitects/symphony).
 
+
+https://github.com/user-attachments/assets/177b2817-96f6-4dd0-825b-6c2ebbaebf80
+
+
 Built on top of [JSmol](https://jmol.sourceforge.net/) for 3D visualization.
 
 ## Quick Start
 
-### 1. Start the Backend (Model Server)
+### 1. Start the Backend
+
+The backend corresponds to the model server, which will be queried for generation.
 
 ```bash
 cd backend
@@ -28,7 +34,7 @@ python src/symphony/server.py \
 python -m http.server 8000
 ```
 
-Then open http://localhost:8000 in your browser.
+Then open `http://localhost:8000` in your browser.
 
 ## How Generation Works
 
@@ -38,7 +44,7 @@ Then open http://localhost:8000 in your browser.
    - **Focus τ** — controls which existing atom gets selected as the focus (anchor) for the new atom.
    - **Radial τ** — controls the distance of the new atom from the focus.
    - **Angular τ** — controls the direction of the new atom relative to the focus.
-   - Higher values → sharper (more deterministic), lower → more random.
+   - Higher values: more deterministic, lower values: more random.
 
 ## Other Features
 
@@ -47,27 +53,3 @@ Then open http://localhost:8000 in your browser.
 - **Manipulate atoms**: select, delete, expand selection.
 - **Visualization controls**: display types, color schemes, isosurfaces, labels.
 - **Export** as `.png`, `.xyz`, `.pdb`, `.mol`, `.sdf`, `.cif`.
-
-## API Endpoint
-
-The backend exposes `POST /generate`:
-
-```json
-{
-    "geometry": "<XYZ string>",
-    "prompt": "<optional conditioning>",
-    "inverse_temperature_focus": 2.0,
-    "inverse_temperature_radial": 2.0,
-    "inverse_temperature_angular": 20.0
-}
-```
-
-Returns:
-
-```json
-{
-    "xyz": "<XYZ string with new atom>",
-    "stopped": false,
-    "num_atoms": 7
-}
-```
