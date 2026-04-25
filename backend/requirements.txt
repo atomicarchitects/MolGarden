@@ -1,4 +1,0 @@
-flask
-flask-cors
-numpy
-symphony @ https://github.com/atomicarchitects/symphony-torch.git
